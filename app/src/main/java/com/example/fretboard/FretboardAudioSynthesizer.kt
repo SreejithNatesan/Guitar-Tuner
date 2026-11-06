@@ -26,6 +26,9 @@ class FretboardAudioSynthesizer(
     currentTrack = null
     try {
       if (track.playState == AudioTrack.PLAYSTATE_PLAYING) {
+        try {
+          track.setVolume(0f)
+        } catch (_: Exception) {}
         track.pause()
         track.flush()
         track.stop()

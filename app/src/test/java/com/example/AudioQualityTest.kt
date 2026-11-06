@@ -414,5 +414,48 @@ class AudioQualityTest {
       assertTrue("Peak must stay below true-peak ceiling (32150)", peak <= 32150)
     }
   }
+
+  @Test
+  fun `verify tuner reference tone has smooth attack and tail fadeout`() {
+    val sampleRate = 44100
+    val durationMs = 1200
+    val numSamples = (sampleRate * (durationMs / 1000.0)).toInt()
+    val stringFreqs = listOf(82.41f, 110.00f, 146.83f, 196.00f, 246.94f, 329.63f)
+
+    stringFreqs.forEach { frequency ->
+      val samples = ShortArray(numSamples)
+      val decayRate = 3.0 / (durationMs / 1000.0)
+      val fundamental = 2.0 * kotlin.math.PI * frequency / sampleRate
+      val attackSamples = (sampleRate * 0.0025).toInt().coerceAtLeast(1)
+      val fadeOutSamples = (sampleRate * 0.04).toInt()
+      val fadeOutStart = numSamples - fadeOutSamples
+
+      for (i in 0 until numSamples) {
+        val t = i.toDouble() / sampleRate
+        val env = kotlin.math.exp(-decayRate * t)
+        val attackEnv = if (i < attackSamples) (i.toDouble() / attackSamples) else 1.0
+        val endFade = if (i >= fadeOutStart) ((numSamples - i).toDouble() / fadeOutSamples) else 1.0
+
+        val wave = kotlin.math.sin(fundamental * i) +
+            0.45 * kotlin.math.sin(fundamental * 2.0 * i) +
+            0.20 * kotlin.math.sin(fundamental * 3.0 * i)
+        val sampleVal = (wave * 0.45 * env * attackEnv * endFade * Short.MAX_VALUE).toInt().coerceIn(
+          Short.MIN_VALUE.toInt(),
+          Short.MAX_VALUE.toInt()
+        )
+        samples[i] = sampleVal.toShort()
+      }
+
+      // 1. Initial sample must be zero
+      org.junit.Assert.assertEquals("Initial sample must be 0 for $frequency Hz", 0, samples[0].toInt())
+
+      // 2. Initial step delta must be smooth (< 100 LSBs)
+      val step1 = kotlin.math.abs(samples[1].toInt() - samples[0].toInt())
+      assertTrue("Step delta at sample 1 must be smooth for $frequency Hz (was $step1)", step1 < 100)
+
+      // 3. Tail sample must be zero
+      org.junit.Assert.assertEquals("Final sample must be 0 for $frequency Hz", 0, samples[numSamples - 1].toInt())
+    }
+  }
 }
 

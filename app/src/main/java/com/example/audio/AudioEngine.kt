@@ -138,15 +138,21 @@ class AudioEngine(
       val samples = ShortArray(numSamples)
       val decayRate = 3.0 / (durationMs / 1000.0) // decay
       val fundamental = 2.0 * PI * frequency / sampleRate
+      val attackSamples = (sampleRate * 0.0025).toInt().coerceAtLeast(1) // 2.5ms attack ramp
+      val fadeOutSamples = (sampleRate * 0.04).toInt() // 40ms smooth end fade
+      val fadeOutStart = numSamples - fadeOutSamples
 
       for (i in 0 until numSamples) {
         val t = i.toDouble() / sampleRate
         val env = exp(-decayRate * t)
+        val attackEnv = if (i < attackSamples) (i.toDouble() / attackSamples) else 1.0
+        val endFade = if (i >= fadeOutStart) ((numSamples - i).toDouble() / fadeOutSamples) else 1.0
+
         // Add subtle 2nd and 3rd harmonics for rich acoustic guitar string timbre
         val wave = sin(fundamental * i) +
             0.45 * sin(fundamental * 2.0 * i) +
             0.20 * sin(fundamental * 3.0 * i)
-        val sampleVal = (wave * 0.45 * env * Short.MAX_VALUE).toInt().coerceIn(
+        val sampleVal = (wave * 0.45 * env * attackEnv * endFade * Short.MAX_VALUE).toInt().coerceIn(
           Short.MIN_VALUE.toInt(),
           Short.MAX_VALUE.toInt()
         )
@@ -159,6 +165,7 @@ class AudioEngine(
         kotlinx.coroutines.delay(durationMs.toLong() + 100L)
       } finally {
         try {
+          audioTrack.setVolume(0f)
           audioTrack.stop()
           audioTrack.release()
         } catch (_: Exception) {}
