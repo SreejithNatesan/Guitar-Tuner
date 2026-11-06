@@ -1,0 +1,6 @@
+{
+  "name": "Guitar Tuner",
+  "description": "Smart Guitar Tuner with real-time audio pitch detection, precision tuning gauge, celebratory animated guitar mascot, professional metronome, and interactive visual fretboard trainer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

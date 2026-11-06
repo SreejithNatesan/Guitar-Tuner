@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Guitar headstock and neck -->
+    <path
+        android:fillColor="#00E5A3"
+        android:pathData="M50,18 L58,18 C61,18 63,20 63,23 L63,40 L45,40 L45,23 C45,20 47,18 50,18 Z" />
+    <!-- Tuning pegs left and right -->
+    <path
+        android:fillColor="#00E5A3"
+        android:pathData="M39,22 C37.5,22 36,23.5 36,25 C36,26.5 37.5,28 39,28 L45,28 L45,22 Z
+                          M39,32 C37.5,32 36,33.5 36,35 C36,36.5 37.5,38 39,38 L45,38 L45,32 Z
+                          M69,22 C70.5,22 72,23.5 72,25 C72,26.5 70.5,28 69,28 L63,28 L63,22 Z
+                          M69,32 C70.5,32 72,33.5 72,35 C72,36.5 70.5,38 69,38 L63,38 L63,32 Z" />
+    <!-- Guitar body -->
+    <path
+        android:fillColor="#00E5A3"
+        android:pathData="M54,42 C48,42 42,46 40,51 C38,55 39,59 42,62 C37,67 34,74 34,81 C34,91 42,98 54,98 C66,98 74,91 74,81 C74,74 71,67 66,62 C69,59 70,55 68,51 C66,46 60,42 54,42 Z" />
+    <!-- Sound hole / tuner dial -->
+    <path
+        android:fillColor="#0B132B"
+        android:pathData="M54,72 m-11,0 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0" />
+    <!-- In-tune checkmark / tuning fork in center -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M51,76 L46,71 L48,69 L51,72 L60,63 L62,65 Z" />
+</vector>
