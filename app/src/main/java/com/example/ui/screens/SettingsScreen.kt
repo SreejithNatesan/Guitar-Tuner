@@ -36,8 +36,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -72,6 +74,15 @@ fun SettingsScreen(
   val tunerState by tunerViewModel.state.collectAsState()
   val metronomeState by metronomeViewModel.state.collectAsState()
   val fretboardState by fretboardViewModel.state.collectAsState()
+
+  val context = LocalContext.current
+  val appVersion = remember(context) {
+    try {
+      context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0"
+    } catch (_: Exception) {
+      "1.0"
+    }
+  }
 
   // Hardware and gesture back handler returns to previous main tab
   if (onBack != null) {
@@ -257,27 +268,73 @@ fun SettingsScreen(
         )
       }
 
-      // 5. Minimal About Section
+      // 5. About Section (NINICX Developer Branding)
       Box(
         modifier = Modifier
           .fillMaxWidth()
           .clip(RoundedCornerShape(16.dp))
           .background(NavySurface)
           .border(1.dp, NavyBorder, RoundedCornerShape(16.dp))
-          .padding(14.dp)
+          .padding(16.dp)
+          .testTag("settings_about_section")
       ) {
         Row(
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(10.dp)
+          verticalAlignment = Alignment.Top,
+          horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-          Icon(Icons.Default.Info, contentDescription = null, tint = MintPrimary, modifier = Modifier.size(20.dp))
-          Column {
-            Text("Smart Guitar", color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(2.dp))
+          Box(
+            modifier = Modifier
+              .size(36.dp)
+              .clip(CircleShape)
+              .background(NavyCard)
+              .border(1.dp, NavyBorder, CircleShape),
+            contentAlignment = Alignment.Center
+          ) {
+            Icon(
+              imageVector = Icons.Default.Info,
+              contentDescription = "About Smart Guitar",
+              tint = MintPrimary,
+              modifier = Modifier.size(20.dp)
+            )
+          }
+          Column(modifier = Modifier.weight(1f)) {
+            Row(
+              modifier = Modifier.fillMaxWidth(),
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically
+            ) {
+              Text(
+                text = "Smart Guitar",
+                color = TextPrimary,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold
+              )
+              Text(
+                text = "v$appVersion",
+                color = TextTertiary,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium
+              )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+              text = "Developed by NINICX",
+              color = MintLight,
+              fontSize = 13.sp,
+              fontWeight = FontWeight.SemiBold
+            )
+            Text(
+              text = "Creative Experience",
+              color = FlatCyan,
+              fontSize = 12.sp,
+              fontWeight = FontWeight.Medium,
+              letterSpacing = 0.5.sp
+            )
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
               text = "Works offline. No account needed.",
               color = TextSecondary,
-              fontSize = 12.sp
+              fontSize = 11.sp
             )
           }
         }
